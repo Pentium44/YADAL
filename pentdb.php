@@ -1,6 +1,7 @@
 <?php
 // PentDB - Simple database engine written in PHP
 // (C) Chris Dorman, 2014 - GPLv3
+// Version 0.1b
 
 function pentdb_get($varname, $db) {
 	// check if database exists, if so include
@@ -41,20 +42,25 @@ function pentdb_write($varname, $input, $db) {
 function pentdb_extend($varname, $input, $db) {
 	// check if database exists, if so include
 	if(file_exists($db) && is_readable($db) && include_once($db)) { 
-		$fopen_db = @fopen($db, "r");
+		// check if variable is in database
+		if(!isset(${'pentdbvar_' . $varname})) return 2;
+		
+		$fopen_db = fopen($db, "r");
 		$file_db = file($db, FILE_IGNORE_NEW_LINES);
 		$line_count = 0;
 		$var_contents = ${'pentdbvar_' . $varname};
 		while(!feof($fopen_db)) {
 			$line_data = fgets($fopen_db);
 			if(strpos($line_data, "\$pentdbvar_".$varname) !== false) {
-				$file_db[$line_count] = "\$pentdbvar_".$varname." = \"".$var_contents.$input . "\";\n";
+				$file_db[$line_count] = "\$pentdbvar_".$varname." = \"".$var_contents.$input . "\";";
 				file_put_contents($db, implode( "\n", $file_db ));
-				return 0;
 			}
 	
 			$line_count = $line_count + 1;
 		}
+		fclose($fopen_db);
+		return 0;
+	
 	} else {
 		return 1;
 	}
