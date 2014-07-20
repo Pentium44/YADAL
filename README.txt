@@ -9,6 +9,9 @@ Known Bugs:
 	* pentdb will not return get data if pentdb_extend is ran before pentdb_get
 
 Changelog:
+	* 0.1c
+		Fixed major exploits (added addslashes)
+
 	* 0.1b
 		Little tweaks, closes fopen in extend
 		

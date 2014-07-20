@@ -1,7 +1,7 @@
 <?php
 // PentDB - Simple database engine written in PHP
 // (C) Chris Dorman, 2014 - GPLv3
-// Version 0.1b
+// Version 0.1c
 
 function pentdb_get($varname, $db) {
 	// check if database exists, if so include
@@ -26,7 +26,7 @@ function pentdb_write($varname, $input, $db) {
 			
 			// start writing new variable
 			$db_contents_new = file_get_contents($db);
-			file_put_contents($db, $db_contents_new."\$pentdbvar_".$varname." = \"".$input."\";\n?>");
+			file_put_contents($db, $db_contents_new."\$pentdbvar_".$varname." = \"".addslashes($input)."\";\n?>");
 			return 0;
 		}
 	} else {
@@ -34,7 +34,7 @@ function pentdb_write($varname, $input, $db) {
 		file_put_contents($db, "<?php\n");
 		
 		$db_contents_new = file_get_contents($db);
-		file_put_contents($db, $db_contents_new."\$pentdbvar_".$varname." = \"".$input."\";\n?>");
+		file_put_contents($db, $db_contents_new."\$pentdbvar_".$varname." = \"".addslashes($input)."\";\n?>");
 		return 0;
 	}
 }
@@ -52,7 +52,7 @@ function pentdb_extend($varname, $input, $db) {
 		while(!feof($fopen_db)) {
 			$line_data = fgets($fopen_db);
 			if(strpos($line_data, "\$pentdbvar_".$varname) !== false) {
-				$file_db[$line_count] = "\$pentdbvar_".$varname." = \"".$var_contents.$input . "\";";
+				$file_db[$line_count] = "\$pentdbvar_".$varname." = \"".$var_contents.addslashes($input) . "\";";
 				file_put_contents($db, implode( "\n", $file_db ));
 			}
 	
